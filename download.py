@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import json
 import sys
 import urllib2
 
@@ -22,13 +21,11 @@ def get_dropbox_download_info(url):
     file_name = url.split('/')[-1]
     return download_url, file_name
 
-GOOGLE_DRIVE_BASE_URL = 'https://www.googleapis.com/drive/v2/files/'
-def get_google_drive_download_info(url, api_key):
+GOOGLE_DRIVE_BASE_URL = 'https://docs.google.com/feeds/download/documents/export/Export?id='
+def get_google_drive_download_info(url):
     file_id = url.split('d/')[1].split('/')[0]
-    req_url = GOOGLE_DRIVE_BASE_URL + file_id + '?key=' + api_key
-    file_data = json.loads(get_url(req_url))
-    download_url = file_data['exportLinks']['application/pdf']
-    file_name = file_data['title'] + '.pdf'
+    download_url = GOOGLE_DRIVE_BASE_URL + file_id + '&exportFormat=pdf'
+    file_name = file_id + '.pdf'
     return download_url, file_name
 
 if __name__ == '__main__':
@@ -37,5 +34,4 @@ if __name__ == '__main__':
         download_url(*get_dropbox_download_info(url))
     elif sys.argv[1] == 'drive':
         url = sys.argv[2]
-        api_key = sys.argv[3]
-        download_url(*get_google_drive_download_info(url, api_key))
+        download_url(*get_google_drive_download_info(url))
